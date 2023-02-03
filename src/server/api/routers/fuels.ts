@@ -3,10 +3,10 @@
 import { z } from "zod";
 import { prisma } from "../../db";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const fuelsRouter = createTRPCRouter({
-  getByCity: publicProcedure.query(async ({ input }) => {
+  getByCity: publicProcedure.query(async ({ input, ctx }) => {
     const data = await prisma.fuels.findMany({
       select: {
         id: true,
