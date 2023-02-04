@@ -1,30 +1,18 @@
-import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  Container,
-} from "@chakra-ui/react";
-import { api } from "../utils/api";
-import { Text } from "@chakra-ui/react";
-import {
-  parseDateToIndonesiaDate,
-  parseFuelType,
-  parsePrice,
-} from "../utils/parse";
+import { Box, Container, FormControl, Input, Stack } from "@chakra-ui/react";
+import { Select } from "chakra-react-select";
+import { api } from "~/src/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  const { data } = api.fuels.getByCity.useQuery();
+  const { data } = api.city.getAll.useQuery();
+
+  if (!data) return <div>Loading...</div>;
+
+  const cityOptions = data.map((city) => ({
+    value: city.id,
+    label: city.id,
+  }));
 
   return (
     <>
@@ -34,32 +22,19 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Container maxW="container.xl">
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>Tipe</Th>
-                <Th>Kota</Th>
-                <Th>Harga</Th>
-                <Th>Tanggal</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data?.map((item) => {
-                return (
-                  <Tr key={item.id}>
-                    <Td>{parseFuelType(item.type)}</Td>
-                    <Td>{item.City.id}</Td>
-                    <Td>{parseDateToIndonesiaDate(item.date)}</Td>
-                    <Td>{parsePrice(item.price)}</Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Container>
+      <Box minH="100vh">
+        <Container maxW="container.xl">
+          <Stack mt="5">
+            <FormControl>
+              <Select options={cityOptions} />
+            </FormControl>
+
+            <FormControl>
+              <Select options={cityOptions} />
+            </FormControl>
+          </Stack>
+        </Container>
+      </Box>
     </>
   );
 };
